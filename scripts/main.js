@@ -63,12 +63,13 @@ async function showHeraldDialog() {
   `;
   datas.forEach((data) => {
     let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
+    console.log(data.preview);
     content += `
       <div class="asset-item">
         <p>${data.name}</p>
         <img src="${thumbnail}" alt="${data.name}" class="asset-image" style="" />
         <div class="button-container">
-          <button class="preview-button" onclick="showPreviewDialog(${data.preview})">Preview</button>
+          <button class="preview-button" onclick="showPreviewDialog('${data.preview}')">Preview</button>
           <button class="download-button" onclick="showDownloadAssets(${data.id})">Download</button>
         </div>
       </div>
@@ -81,6 +82,7 @@ async function showHeraldDialog() {
   `;
 
   const dialog = new Dialog({
+    id: "heraldMap",
     title: "Herald's-Maps",
     content: content,
     buttons: {},
@@ -96,9 +98,8 @@ function go_patreon() {
 }
 
 function showPreviewDialog(preview) {
-  // let link = `http://localhost:3000${preview}`;
   new Dialog({
-    title: "Preview Gambar",
+    title: "Preview",
     content: `<img src="${preview}" style="max-width: 100%; height: auto;" />`,
     buttons: {
       close: {
@@ -166,7 +167,6 @@ async function showDownloadAssets(assetId) {
 //   }
 
 function createFolderMap(assetId) {
-
   let tempdata = {};
 
   for (const data of allData) {
@@ -236,7 +236,6 @@ async function checkFileExists(filePath, nameFile) {
     for (let file of result.files) {
       const decodedFile = decodeURIComponent(file);
 
-  
       if (decodedFile === existFile) {
         hasil = true;
         break;

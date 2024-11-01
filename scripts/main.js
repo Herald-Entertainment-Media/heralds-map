@@ -166,7 +166,7 @@ async function showDownloadAssets(assetId) {
 //   }
 
 function createFolderMap(assetId) {
-  console.log(allData);
+
   let tempdata = {};
 
   for (const data of allData) {
@@ -232,13 +232,11 @@ async function checkFileExists(filePath, nameFile) {
   try {
     const result = await FilePicker.browse("data", filePath);
     let existFile = decodeURIComponent(filePath + "/" + nameFile);
-    console.log(existFile);
-    console.log(result);
     let hasil = false;
     for (let file of result.files) {
       const decodedFile = decodeURIComponent(file);
 
-      console.log(decodedFile);
+  
       if (decodedFile === existFile) {
         hasil = true;
         break;

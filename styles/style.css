@@ -1,0 +1,100 @@
+.herald-button {
+    color: #fff;
+    background-color: #1b1b1b;
+    border: 1px solid #555;
+    padding: 2px 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    width: auto;
+    margin-left: 5px;
+}
+
+.herald-button:hover {
+    background-color: #333;
+    border-color: #888;
+}
+
+.asset-container {
+    text-align: center;
+    margin-bottom: 100px;
+}
+
+.asset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    align-items: center;
+}
+
+.asset-item {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+
+    padding: 16px;
+    transition: transform 0.3s ease;
+
+}
+
+.asset-image {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+}
+
+.button-container {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.preview-button,
+.download-button {
+    padding: 5px 10px;
+    background-color: transparent;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.close-button {
+    padding: 5px 10px;
+    background-color: #1b1b1b;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+.dialog {
+    width: 900px !important;
+    height: 600px !important;
+
+}
+
+.patreon-button {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background-color: #1b1b1b;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: calc(100% - 40px);
+}

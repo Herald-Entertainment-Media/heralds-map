@@ -24,7 +24,7 @@ Hooks.on("ready", () => {
 });
 /////---------------------------------------------/////
 let allData = [];
-let linkUrl = "https://herald-api-beta.onrender.com";
+let linkUrl = "https://herald-api-beta-test.onrender.com";
 async function createFolder(folder) {
   try {
     await FilePicker.createDirectory("data", folder);
@@ -47,50 +47,166 @@ async function fetchData() {
   }
 }
 
-async function showHeraldDialog() {
-  const datas = await fetchData();
+async function renderListMaps() {
+  const dataMaps = await fetchData();
+  let divListMaps = document.getElementById("divListMaps");
+  let listMaps = "";
 
-  allData = datas;
-  if (!datas || datas.length === 0) {
-    console.error("No assets found.");
-    return;
-  }
-
-  let content = `
-    <div class="asset-container">
-      <button class="patreon-button" onclick="go_patreon()">Patreon</button>
-      <div class="asset-grid">
-  `;
-  datas.forEach((data) => {
+  for (data of dataMaps) {
     let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
-    console.log(data.preview);
-    content += `
-      <div class="asset-item">
-        <p>${data.name}</p>
+    listMaps += `
+    <div class="asset-item">
         <img src="${thumbnail}" alt="${data.name}" class="asset-image" style="" />
+         <p>${data.name}</p>
         <div class="button-container">
           <button class="preview-button" onclick="showPreviewDialog('${data.preview}')">Preview</button>
           <button class="download-button" onclick="showDownloadAssets(${data.id})">Download</button>
         </div>
-      </div>
-    `;
-  });
-
-  content += `
-      </div>
     </div>
-  `;
+    `;
+  }
+
+  divListMaps.innerHTML = listMaps;
+}
+
+async function renderTags() {
+  const dataTags = await fetchData();
+  let divListTags = document.getElementById("divTags");
+  let listTags = "";
+  let tags = [];
+  for (data of dataTags) {
+    for (d of data.tags) {
+      tags.push(d);
+    }
+  }
+  let uniqueTags = Array.from(new Set(tags));
+  for (tag of uniqueTags) {
+    listTags += `
+     <div class="tag" onclick="toggleActive(this)" data-value="${tag}">
+          ${tag}
+      </div>
+      
+    `;
+  }
+  divListTags.innerHTML = listTags;
+}
+
+function toggleActive(element) {
+  element.classList.toggle("active");
+
+  let allTag = document.querySelectorAll(".tag");
+  let listActive = [];
+  for (tag of allTag) {
+    if (tag.classList.contains("active")) {
+      let value = tag.getAttribute("data-value");
+      listActive.push(value);
+    }
+  }
+  if (listActive.length == 0) {
+    renderListMaps();
+  } else {
+    renderListMapsFilter();
+  }
+}
+
+async function renderListMapsFilter() {
+  let allTag = document.querySelectorAll(".tag");
+  let listActive = [];
+  for (tag of allTag) {
+    if (tag.classList.contains("active")) {
+      let value = tag.getAttribute("data-value");
+      listActive.push(value);
+    }
+  }
+  // const dataTags = await fetchData();
+  let listMaps = "";
+  let dataMaps = [];
+  for (data of allData) {
+    for (tag of data.tags) {
+      if (listActive.includes(tag) == true) {
+        dataMaps.push(data);
+      }
+    }
+  }
+
+  let uniqueMaps = Array.from(new Set(dataMaps));
+  console.log(uniqueMaps);
+
+  let divListMaps = document.getElementById("divListMaps");
+
+  for (data of uniqueMaps) {
+    let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
+    listMaps += `
+    <div class="asset-item">
+        <img src="${thumbnail}" alt="${data.name}" class="asset-image" style="" />
+         <p>${data.name}</p>
+        <div class="button-container">
+          <button class="preview-button" onclick="showPreviewDialog('${data.preview}')">Preview</button>
+          <button class="download-button" onclick="showDownloadAssets(${data.id})">Download</button>
+        </div>
+    </div>
+    `;
+  }
+
+  divListMaps.innerHTML = listMaps;
+}
+
+async function showHeraldDialog() {
+  const datas = await fetchData();
+  if (!datas || datas.length === 0) {
+    console.error("No assets found.");
+    return;
+  }
+  allData = datas;
+  const templatePath = "modules/herald-map-beta/templates/heraldDialog.html";
+  const response = await fetch(templatePath);
+  let templateContent = await response.text();
+
+  // let itemsContent = datas
+  //   .map((data) => {
+  //     let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
+  //     return `
+  //     <div class="asset-item">
+  //       <img src="${thumbnail}" alt="${data.name}" class="asset-image" style="" />
+  //        <p>${data.name}</p>
+  //       <div class="button-container">
+  //         <button class="preview-button" onclick="showPreviewDialog('${data.preview}')">Preview</button>
+  //         <button class="download-button" onclick="showDownloadAssets(${data.id})">Download</button>
+  //       </div>
+  //     </div>
+  //   `;
+  //   })
+  //   .join("");
+
+  // templateContent = templateContent.replace("{{items}}", itemsContent);
 
   const dialog = new Dialog({
     id: "heraldMap",
-    title: "Herald's-Maps",
-    content: content,
-    buttons: {},
+    title: "Herald's Maps",
+    content: templateContent,
     default: "close",
-    width: 2000,
-    height: 1200,
     resizable: true,
-  }).render(true);
+    buttons: {},
+  });
+  dialog.render(true);
+
+  Hooks.once("renderDialog", (app) => {
+    if (app instanceof Dialog && app.title === "Herald's Maps") {
+      const width = 900;
+      const height = 600;
+
+      app.setPosition({
+        left: (window.innerWidth - width) / 2,
+        top: (window.innerHeight - height) / 2,
+        width: width,
+        height: height,
+        scale: 1.0,
+      });
+    }
+  });
+
+  renderListMaps();
+  renderTags();
 }
 
 function go_patreon() {
@@ -98,8 +214,8 @@ function go_patreon() {
 }
 
 function showPreviewDialog(preview) {
-  new Dialog({
-    title: "Preview",
+  const dPreview = new Dialog({
+    title: "Map Preview",
     content: `<img src="${preview}" style="max-width: 100%; height: auto;" />`,
     buttons: {
       close: {
@@ -107,7 +223,22 @@ function showPreviewDialog(preview) {
         callback: () => console.log("Preview ditutup"),
       },
     },
-  }).render(true);
+  });
+  dPreview.render(true);
+  Hooks.once("renderDialog", (app) => {
+    if (app instanceof Dialog && app.title === "Map Preview") {
+      const width = 900;
+      const height = 700;
+
+      app.setPosition({
+        left: (window.innerWidth - width) / 2,
+        top: (window.innerHeight - height) / 2,
+        width: width,
+        height: height,
+        scale: 1.0,
+      });
+    }
+  });
 }
 
 async function showDownloadAssets(assetId) {
@@ -147,28 +278,34 @@ async function showDownloadAssets(assetId) {
           </ul>
       </div>
     </div>  `;
-  new Dialog({
+  const dList = new Dialog({
     title: "Assets Download",
     content: checklistItems,
     buttons: {},
     default: "cancel",
-  }).render(true);
+  });
+
+  dList.render(true);
+  Hooks.once("renderDialog", (app) => {
+    if (app instanceof Dialog && app.title === "Assets Download") {
+      const width = 900;
+      const height = 600;
+
+      app.setPosition({
+        left: (window.innerWidth - width) / 2,
+        top: (window.innerHeight - height) / 2,
+        width: width,
+        height: height,
+        scale: 1.0,
+      });
+    }
+  });
 
   downloadAssets(assetId);
 }
 
-// async function createFolderHerald(name,folder) {
-//     try {
-//       await FilePicker.createDirectory(`data/${name}`, folder);
-//       ui.notifications.info(`Folder ${folder} created successfully.`);
-//     } catch (error) {
-//       console.log("folder sudah dibuat");
-//     }
-//   }
-
-function createFolderMap(assetId) {
+async function createFolderMap(assetId) {
   let tempdata = {};
-
   for (const data of allData) {
     if (data.id === assetId) {
       tempdata = data;

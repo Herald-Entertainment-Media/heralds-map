@@ -127,14 +127,20 @@ async function renderListMapsFilter() {
       listActive.push(value);
     }
   }
+  console.log(listActive);
   // const dataTags = await fetchData();
   let listMaps = "";
   let dataMaps = [];
   for (data of allData) {
+    let jmlTags = 0;
+    console.log(data.tags.length);
     for (tag of data.tags) {
       if (listActive.includes(tag) == true) {
-        dataMaps.push(data);
+        jmlTags++;
       }
+    }
+    if (jmlTags == listActive.length) {
+      dataMaps.push(data);
     }
   }
 
@@ -159,6 +165,73 @@ async function renderListMapsFilter() {
 
   divListMaps.innerHTML = listMaps;
 }
+
+// async function renderListMapsFilter() {
+//   let allTag = document.querySelectorAll(".tag");
+//   let listActive = [];
+//   let filterPremium = false;
+//   let filterFree = false;
+
+//   // Collect active tags
+//   for (tag of allTag) {
+//     if (tag.classList.contains("active")) {
+//       let value = tag.getAttribute("data-value");
+//       listActive.push(value);
+
+//       // Check if premium or free tags are active
+//       if (value === "premium") {
+//         filterPremium = true;
+//       } else if (value === "free") {
+//         filterFree = true;
+//       }
+//     }
+//   }
+
+//   // Initialize the filtered list
+//   let listMaps = "";
+//   let dataMaps = [];
+
+//   // Filter maps based on active tags and premium/free condition
+//   for (data of allData) {
+//     // Check if the map contains any of the active tags
+//     let hasActiveTag = data.tags.some((tag) => listActive.includes(tag));
+
+//     // Filter by "premium" or "free" if applicable
+//     if (hasActiveTag) {
+//       if (filterPremium && !data.tags.includes("premium")) {
+//         continue; // Skip maps that don't have the "premium" tag
+//       }
+//       if (filterFree && !data.tags.includes("free")) {
+//         continue; // Skip maps that don't have the "free" tag
+//       }
+//       dataMaps.push(data);
+//     }
+//   }
+
+//   // Remove duplicate maps
+//   let uniqueMaps = Array.from(new Set(dataMaps));
+
+//   // Get the container to render maps
+//   let divListMaps = document.getElementById("divListMaps");
+
+//   // Loop through filtered maps and create HTML for each one
+//   for (data of uniqueMaps) {
+//     let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
+//     listMaps += `
+//       <div class="asset-item">
+//         <img src="${thumbnail}" alt="${data.name}" class="asset-image" />
+//         <p>${data.name}</p>
+//         <div class="button-container">
+//           <button class="preview-button" onclick="showPreviewDialog('${data.preview}')">Preview</button>
+//           <button class="download-button" onclick="showDownloadAssets(${data.id})">Download</button>
+//         </div>
+//       </div>
+//     `;
+//   }
+
+//   // Render the filtered maps
+//   divListMaps.innerHTML = listMaps;
+// }
 
 async function showHeraldDialog() {
   const datas = await fetchData();

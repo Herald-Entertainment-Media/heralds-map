@@ -66,7 +66,7 @@
     background-color: black;
     border-color: white;
     color: white;
- 
+
 }
 
 .bannerMaps {
@@ -101,10 +101,6 @@
     border-radius: 5px;
     display: block;
     margin: 0 auto;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
 }
 
 .button-container {
@@ -136,16 +132,29 @@
 
 .patreon-button {
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 5px 10px;
     background-color: #1b1b1b;
     color: #fff;
     border: 1px solid #555;
     border-radius: 4px;
     cursor: pointer;
-    margin-left: 10px;
-    margin-right: 10px;
-    width: calc(100% - 40px);
+
+    width: 200px;
+    height: 100px;
+}
+
+
+.patreon-image {
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 6px;
+    transition: transform 0.3s ease;
+    text-align: center;
+    border: none;
+}
+
+.patreon-container{
+    width: 18%;
+    position: absolute;
+    bottom: 10px;
+    cursor: pointer;
 }

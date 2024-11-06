@@ -72,14 +72,23 @@ async function renderListMaps() {
 async function renderTags() {
   const dataTags = await fetchData();
   let divListTags = document.getElementById("divTags");
-  let listTags = "";
+  let listTags = `
+  <div class="tag" onclick="toggleActive(this)" data-value="free">
+          free
+  </div>
+  <div class="tag" onclick="toggleActive(this)" data-value="premium">
+          premium
+  </div>
+  `;
   let tags = [];
   for (data of dataTags) {
     for (d of data.tags) {
       tags.push(d);
     }
   }
-  let uniqueTags = Array.from(new Set(tags));
+  let uniqueTags = Array.from(new Set(tags)).filter(
+    (tag) => tag !== "free" && tag !== "premium"
+  );
   for (tag of uniqueTags) {
     listTags += `
      <div class="tag" onclick="toggleActive(this)" data-value="${tag}">

@@ -100,9 +100,24 @@ async function renderTags() {
   divListTags.innerHTML = listTags;
 }
 
+function searchMaps() {
+  let input = document.getElementById("inputSearch").value;
+
+  if (input != null || input != "") {
+    renderListMaps();
+  }
+  let listMaps = [];
+  for (data of allData) {
+    let name = data.name.toLowerCase();
+    if (name.indexOf(input) != -1) {
+      listMaps.pus(data);
+    }
+  }
+  console.log(allData);
+}
+
 function toggleActive(element) {
   element.classList.toggle("active");
-
   let allTag = document.querySelectorAll(".tag");
   let listActive = [];
   for (tag of allTag) {
@@ -111,45 +126,62 @@ function toggleActive(element) {
       listActive.push(value);
     }
   }
-  if (listActive.length == 0) {
-    renderListMaps();
-  } else {
-    renderListMapsFilter();
-  }
+  renderListMapsFilter();
+  // if (listActive.length == 0) {
+  //   renderListMaps();
+  // } else {
+    
+  // }
 }
 
 async function renderListMapsFilter() {
   let allTag = document.querySelectorAll(".tag");
   let listActive = [];
-  for (tag of allTag) {
-    if (tag.classList.contains("active")) {
-      let value = tag.getAttribute("data-value");
-      listActive.push(value);
-    }
-  }
-  console.log(listActive);
-  // const dataTags = await fetchData();
   let listMaps = "";
   let dataMaps = [];
-  for (data of allData) {
-    let jmlTags = 0;
-    console.log(data.tags.length);
-    for (tag of data.tags) {
-      if (listActive.includes(tag) == true) {
-        jmlTags++;
+  let finalMaps = [];
+  if (allTag.length != 0) {
+    for (tag of allTag) {
+      if (tag.classList.contains("active")) {
+        let value = tag.getAttribute("data-value");
+        listActive.push(value);
       }
     }
-    if (jmlTags == listActive.length) {
-      dataMaps.push(data);
+
+    for (data of allData) {
+      let jmlTags = 0;
+      for (tag of data.tags) {
+        if (listActive.includes(tag) == true) {
+          jmlTags++;
+        }
+      }
+      if (jmlTags == listActive.length) {
+        dataMaps.push(data);
+      }
     }
+  } else {
+    dataMaps = allData;
   }
 
   let uniqueMaps = Array.from(new Set(dataMaps));
   console.log(uniqueMaps);
+  let input = document.getElementById("inputSearch").value;
+  if (input != "") {
+    let tempMaps = []
+    for (const map of uniqueMaps) {
+      let name = map.name.toLowerCase();
+      if (name.includes(input.toLowerCase())) {
+        tempMaps.push(map);
+      }
+    }
+    finalMaps = Array.from(new Set(tempMaps));
+  } else {
+    finalMaps = uniqueMaps;
+  }
 
   let divListMaps = document.getElementById("divListMaps");
 
-  for (data of uniqueMaps) {
+  for (data of finalMaps) {
     let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
     listMaps += `
     <div class="asset-item">
@@ -166,73 +198,6 @@ async function renderListMapsFilter() {
   divListMaps.innerHTML = listMaps;
 }
 
-// async function renderListMapsFilter() {
-//   let allTag = document.querySelectorAll(".tag");
-//   let listActive = [];
-//   let filterPremium = false;
-//   let filterFree = false;
-
-//   // Collect active tags
-//   for (tag of allTag) {
-//     if (tag.classList.contains("active")) {
-//       let value = tag.getAttribute("data-value");
-//       listActive.push(value);
-
-//       // Check if premium or free tags are active
-//       if (value === "premium") {
-//         filterPremium = true;
-//       } else if (value === "free") {
-//         filterFree = true;
-//       }
-//     }
-//   }
-
-//   // Initialize the filtered list
-//   let listMaps = "";
-//   let dataMaps = [];
-
-//   // Filter maps based on active tags and premium/free condition
-//   for (data of allData) {
-//     // Check if the map contains any of the active tags
-//     let hasActiveTag = data.tags.some((tag) => listActive.includes(tag));
-
-//     // Filter by "premium" or "free" if applicable
-//     if (hasActiveTag) {
-//       if (filterPremium && !data.tags.includes("premium")) {
-//         continue; // Skip maps that don't have the "premium" tag
-//       }
-//       if (filterFree && !data.tags.includes("free")) {
-//         continue; // Skip maps that don't have the "free" tag
-//       }
-//       dataMaps.push(data);
-//     }
-//   }
-
-//   // Remove duplicate maps
-//   let uniqueMaps = Array.from(new Set(dataMaps));
-
-//   // Get the container to render maps
-//   let divListMaps = document.getElementById("divListMaps");
-
-//   // Loop through filtered maps and create HTML for each one
-//   for (data of uniqueMaps) {
-//     let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
-//     listMaps += `
-//       <div class="asset-item">
-//         <img src="${thumbnail}" alt="${data.name}" class="asset-image" />
-//         <p>${data.name}</p>
-//         <div class="button-container">
-//           <button class="preview-button" onclick="showPreviewDialog('${data.preview}')">Preview</button>
-//           <button class="download-button" onclick="showDownloadAssets(${data.id})">Download</button>
-//         </div>
-//       </div>
-//     `;
-//   }
-
-//   // Render the filtered maps
-//   divListMaps.innerHTML = listMaps;
-// }
-
 async function showHeraldDialog() {
   const datas = await fetchData();
   if (!datas || datas.length === 0) {
@@ -243,24 +208,6 @@ async function showHeraldDialog() {
   const templatePath = "modules/herald-map-beta/templates/heraldDialog.html";
   const response = await fetch(templatePath);
   let templateContent = await response.text();
-
-  // let itemsContent = datas
-  //   .map((data) => {
-  //     let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
-  //     return `
-  //     <div class="asset-item">
-  //       <img src="${thumbnail}" alt="${data.name}" class="asset-image" style="" />
-  //        <p>${data.name}</p>
-  //       <div class="button-container">
-  //         <button class="preview-button" onclick="showPreviewDialog('${data.preview}')">Preview</button>
-  //         <button class="download-button" onclick="showDownloadAssets(${data.id})">Download</button>
-  //       </div>
-  //     </div>
-  //   `;
-  //   })
-  //   .join("");
-
-  // templateContent = templateContent.replace("{{items}}", itemsContent);
 
   const dialog = new Dialog({
     id: "heraldMap",
@@ -399,7 +346,7 @@ async function createFolderMap(assetId) {
   let month = release[1];
   createFolder(`Herald's-Maps/${year}`);
   createFolder(`Herald's-Maps/${year}/${month}`);
-  createFolder(`Herald's-Maps/${year}/${month}/${tempdata.name}`);
+  createFolder(`Herald's-Maps/${year}/${month}/${tempdata.folder_name}`);
 }
 async function downloadAssets(assetId) {
   const assets = await fetchData();
@@ -417,7 +364,7 @@ async function downloadAssets(assetId) {
 
   createFolderMap(assetId);
 
-  let directorySave = `Herald's-Maps/${year}/${month}/${tempdata.name}`;
+  let directorySave = `Herald's-Maps/${year}/${month}/${tempdata.folder_name}`;
   for (const image of tempdata.assets) {
     const progressId = `progress-${assetId}-${image.id}`;
     document.getElementById(progressId).innerText = "Processing...";

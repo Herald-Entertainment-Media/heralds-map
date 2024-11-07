@@ -152,9 +152,27 @@
     border: none;
 }
 
-.patreon-container{
+.patreon-container {
     width: 18%;
     position: absolute;
     bottom: 10px;
     cursor: pointer;
+}
+
+.thumbnail-container {
+    position: relative;
+}
+
+.tagtipe {
+    border: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(10%, 40%);
+    width: 30px;
+    height: 30px;
+    -webkit-transform: translate(10%, 40%);
+    -moz-transform: translate(10%, 40%);
+    -ms-transform: translate(10%, 40%);
+    -o-transform: translate(10%, 40%);
 }

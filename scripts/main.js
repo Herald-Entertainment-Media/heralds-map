@@ -54,9 +54,19 @@ async function renderListMaps() {
 
   for (data of dataMaps) {
     let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
+
+    let typeImages = "";
+    if (data.tags.includes("premium")) {
+      typeImages = "modules/herald-map-beta/assets/images/circle_yellow.png";
+    } else {
+      typeImages = "modules/herald-map-beta/assets/images/circle_green.png";
+    }
     listMaps += `
     <div class="asset-item">
-        <img src="${thumbnail}" alt="${data.name}" class="asset-image" style="" />
+        <div class="thumbnail-container">
+          <img src="${thumbnail}" alt="${data.name}" class="asset-image" style="" />
+          <img src="${typeImages}" alt="${data.name}" class="tagtipe" style="" />
+      </div>
          <p>${data.name}</p>
         <div class="button-container">
           <button class="preview-button" onclick="showPreviewDialog('${data.preview}')">Preview</button>
@@ -130,7 +140,7 @@ function toggleActive(element) {
   // if (listActive.length == 0) {
   //   renderListMaps();
   // } else {
-    
+
   // }
 }
 
@@ -167,7 +177,7 @@ async function renderListMapsFilter() {
   console.log(uniqueMaps);
   let input = document.getElementById("inputSearch").value;
   if (input != "") {
-    let tempMaps = []
+    let tempMaps = [];
     for (const map of uniqueMaps) {
       let name = map.name.toLowerCase();
       if (name.includes(input.toLowerCase())) {
@@ -184,8 +194,13 @@ async function renderListMapsFilter() {
   for (data of finalMaps) {
     let thumbnail = `modules/herald-map-beta/assets/thumbnail/${data.thumbnail}`;
     listMaps += `
+    <img src="modules/herald-map-beta/assets/images/patreon_red.webp" alt="${data.name}" class="tagtipe" style="" />
     <div class="asset-item">
-        <img src="${thumbnail}" alt="${data.name}" class="asset-image" style="" />
+      <div class="thumbnail-container">
+          <img src="${thumbnail}" alt="${data.name}" class="asset-image" style="" />
+          <img src="modules/herald-map-beta/assets/images/circle_green.png" alt="${data.name}" class="tagtipe" style="" />
+      </div>
+       
          <p>${data.name}</p>
         <div class="button-container">
           <button class="preview-button" onclick="showPreviewDialog('${data.preview}')">Preview</button>
